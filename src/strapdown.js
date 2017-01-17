@@ -91,15 +91,21 @@
 
   var newNode = document.createElement('div');
   newNode.className = 'container';
-  newNode.id = 'content';
+
+  var contentNode = document.createElement('div');
+  contentNode.className = 'col-lg-5';
+  contentNode.id = 'content';
+  
+  newNode.appendChild(contentNode);
+
   document.body.replaceChild(newNode, markdownEl);
 
   // Insert navbar if there's none
-  var newNode = document.createElement('div');
-  newNode.className = 'navbar navbar-fixed-top';
+  var navbarNode = document.createElement('div');
+  navbarNode.className = 'navbar navbar-fixed-top';
   if (!navbarEl && titleEl) {
-    newNode.innerHTML = '<div class="navbar-inner"> <div class="container"> <div id="headline" class="brand"> </div> </div> </div>';
-    document.body.insertBefore(newNode, document.body.firstChild);
+    navbarNode.innerHTML = '<div class="navbar-inner"> <div class="container"> <div id="headline" class="brand"> </div> </div> </div>';
+    document.body.insertBefore(navbarNode, document.body.firstChild);
     var title = titleEl.innerHTML;
     var headlineEl = document.getElementById('headline');
     if (headlineEl)
@@ -129,6 +135,37 @@
   for (var i=0, ii=tableEls.length; i<ii; i++) {
     var tableEl = tableEls[i];
     tableEl.className = 'table table-striped table-bordered';
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  //
+  // Menu
+  //
+
+  var menu = document.getElementsByTagName('html')[0].getAttribute('data-menu');
+
+  if (menu) {
+    menu = menu
+      .split(';')
+      .map(function (item) {
+        var menuData = item.split('|');
+        return {
+          href: menuData[0],
+          name: menuData[1]
+        };
+      });
+    var menuItemTpl = '<a class="list-group-item" href="{{href}}">{{name}}</a>';
+    var menuNode = document.createElement('div');
+
+    menuNode.style.marginRight = '30px';
+    menuNode.className = 'col-lg-3 col-md-3 col-sm-4';
+    menuNode.innerHTML = '<div class="list-group table-of-contents">' +
+      menu.reduce(function (a, b) {
+        return a + menuItemTpl.split('{{href}}').join(b.href).split('{{name}}').join(b.name);
+      }, '') +
+      '</div>';
+    newNode.insertBefore(menuNode, newNode.firstChild);
+
   }
 
   // All done - show body

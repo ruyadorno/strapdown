@@ -402,7 +402,7 @@ var PR=win['PR']={'createSimpleLexer':createSimpleLexer,'registerLangHandler':re
   newNode.className = 'container';
 
   var contentNode = document.createElement('div');
-  contentNode.className = 'col-lg-5';
+  contentNode.className = 'col-lg-8';
   contentNode.id = 'content';
   
   newNode.appendChild(contentNode);
@@ -460,18 +460,21 @@ var PR=win['PR']={'createSimpleLexer':createSimpleLexer,'registerLangHandler':re
         var menuData = item.split('|');
         return {
           href: menuData[0],
-          name: menuData[1]
+          name: menuData[1],
+          className: menuData[2]
         };
       });
-    var menuItemTpl = '<a class="list-group-item" href="{{href}}">{{name}}</a>';
+    var menuItemTpl = '<a class="list-group-item {{className}}" href="{{href}}">{{name}}</a>';
     var menuNode = document.createElement('div');
-    console.log(menu);
 
     menuNode.style.marginRight = '30px';
     menuNode.className = 'col-lg-3 col-md-3 col-sm-4';
     menuNode.innerHTML = '<div class="list-group table-of-contents">' +
       menu.reduce(function (a, b) {
-        return a + menuItemTpl.split('{{href}}').join(b.href).split('{{name}}').join(b.name);
+        return a + menuItemTpl
+          .split('{{href}}').join(b.href)
+          .split('{{name}}').join(b.name)
+          .split('{{className}}').join(b.className || '');
       }, '') +
       '</div>';
     newNode.insertBefore(menuNode, newNode.firstChild);
